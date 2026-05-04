@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>MZAZI XMD | HACKER TERMINAL BOT</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ========== HACKER THEME – MATRIX NEO ========== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :root {
+      --bg-deep: #030705;
+      --bg-terminal: #07100c;
+      --panel-bg: rgba(0, 15, 5, 0.85);
+      --neon-green: #0f0;
+      --neon-dim: #0a4a2a;
+      --glow-green: rgba(0, 255, 0, 0.25);
+      --text-primary: #b3ffcf;
+      --text-dim: #5f9e6e;
+      --border-neon: #1f3d2c;
+      --danger: #ff3366;
+      --warning: #f5a623;
+      --success: #0f0;
+      --radius: 12px;
+    }
+
+    body {
+      background: var(--bg-deep);
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-primary);
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Matrix rain effect (subtle) */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(0deg, rgba(0, 255, 0, 0.03) 0px, rgba(0, 255, 0, 0.03) 2px, transparent 2px, transparent 8px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Glitch scanline */
+    body::after {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(transparent 50%, rgba(0, 255, 0, 0.02) 50%);
+      background-size: 100% 4px;
+      pointer-events: none;
+      z-index: 1;
+      animation: scan 12s linear infinite;
+    }
+
+    @keyframes scan {
+      0% { background-position: 0 0; }
+      100% { background-position: 0 100%; }
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 3;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem;
+      width: 100%;
+    }
+
+    /* GLASS TERMINAL HEADER */
+    header {
+      background: var(--panel-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--neon-dim);
+      border-radius: var(--radius);
+      padding: 1rem 1.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 0 12px rgba(0, 255, 0, 0.1);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-weight: 800;
+      font-size: 1.3rem;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-icon {
+      background: #0f0;
+      color: #000;
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      font-weight: bold;
+      box-shadow: 0 0 8px var(--neon-green);
+    }
+
+    .logo span {
+      color: var(--neon-green);
+      text-shadow: 0 0 4px #0f0;
+    }
+
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 255, 0, 0.1);
+      padding: 0.4rem 1rem;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      border: 1px solid var(--neon-dim);
+      font-family: monospace;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      background: var(--neon-green);
+      border-radius: 50%;
+      box-shadow: 0 0 6px #0f0;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    /* Cards – terminal style */
+    .card, .stat-card, .session-progress, .hero {
+      background: var(--panel-bg);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--neon-dim);
+      border-radius: var(--radius);
+      transition: all 0.2s;
+      margin-bottom: 1.5rem;
+    }
+
+    .card:hover, .hero:hover {
+      border-color: var(--neon-green);
+      box-shadow: 0 0 12px rgba(0, 255, 0, 0.2);
+    }
+
+    .card-header {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--neon-dim);
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      font-size: 0.75rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--neon-green);
+    }
+
+    .card-header-dot {
+      width: 8px;
+      height: 8px;
+      background: #0f0;
+      border-radius: 50%;
+      box-shadow: 0 0 6px #0f0;
+    }
+
+    .card-body {
+      padding: 1.5rem;
+    }
+
+    /* stats grid */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+      padding: 1.2rem;
+      text-align: center;
+    }
+
+    .stat-label {
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      letter-spacing: 1.5px;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      font-family: monospace;
+      color: var(--neon-green);
+      text-shadow: 0 0 4px #0f0;
+    }
+
+    .stat-sub {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+    }
+
+    /* progress */
+    .session-progress {
+      padding: 1rem 1.5rem;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.8rem;
+      font-size: 0.7rem;
+    }
+
+    .progress-track {
+      height: 8px;
+      background: #0a1f14;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #0f0, #2eff7e);
+      width: 0%;
+      box-shadow: 0 0 6px #0f0;
+      transition: width 0.3s;
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .hero-label {
+      font-size: 0.7rem;
+      color: var(--neon-green);
+      letter-spacing: 3px;
+    }
+
+    .hero h1 {
+      font-size: 2rem;
+      margin: 0.5rem 0;
+      font-weight: 800;
+    }
+
+    .hero h1 em {
+      color: #0f0;
+      font-style: normal;
+      text-shadow: 0 0 8px #0f0;
+    }
+
+    /* form elements */
+    input, button {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    input {
+      width: 100%;
+      background: #021007;
+      border: 1.5px solid var(--neon-dim);
+      border-radius: 8px;
+      padding: 0.9rem 1rem;
+      color: #0f0;
+      font-size: 1rem;
+      outline: none;
+      transition: 0.2s;
+    }
+
+    input:focus {
+      border-color: #0f0;
+      box-shadow: 0 0 0 3px rgba(0, 255, 0, 0.2);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 0.9rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0f0, #0a6e2f);
+      color: #000;
+      font-weight: bold;
+      box-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: scale(0.98);
+      filter: brightness(1.1);
+    }
+
+    .btn-danger {
+      background: rgba(255, 51, 102, 0.15);
+      border: 1px solid #ff3366;
+      color: #ff6680;
+      width: auto;
+      padding: 0.4rem 1rem;
+      border-radius: 40px;
+    }
+
+    .btn-copy {
+      background: rgba(0, 255, 0, 0.1);
+      border: 1px solid #0f0;
+      color: #0f0;
+      width: auto;
+      padding: 0.4rem 1rem;
+      border-radius: 40px;
+    }
+
+    /* code box */
+    .code-box {
+      background: #010a05;
+      border: 1px solid #0f0;
+      border-radius: 16px;
+      padding: 1.2rem;
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    .code-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      color: #0f0;
+      text-shadow: 0 0 6px #0f0;
+      font-family: monospace;
+    }
+
+    /* social / autojoin */
+    .social-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      justify-content: center;
+    }
+
+    .social-btn {
+      background: rgba(0, 20, 5, 0.8);
+      border: 1px solid var(--neon-dim);
+      padding: 0.6rem 1.2rem;
+      border-radius: 60px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-decoration: none;
+      color: var(--text-primary);
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .social-btn:hover {
+      border-color: #0f0;
+      background: #0f0;
+      color: #000;
+      box-shadow: 0 0 10px #0f0;
+    }
+
+    .session-item {
+      background: #031007;
+      border: 1px solid var(--neon-dim);
+      border-radius: 16px;
+      padding: 0.9rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.8rem;
+    }
+
+    .session-dot {
+      width: 10px;
+      height: 10px;
+      background: #0f0;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 0.8rem;
+      box-shadow: 0 0 6px #0f0;
+    }
+
+    .dot-warn {
+      background: #f5a623;
+      box-shadow: 0 0 6px #f5a623;
+    }
+
+    .status-msg {
+      margin-top: 1rem;
+      padding: 0.6rem;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      text-align: center;
+      display: none;
+    }
+
+    .msg-ok { background: rgba(0,255,0,0.1); border: 1px solid #0f0; color: #0f0; }
+    .msg-err { background: rgba(255,51,102,0.1); border: 1px solid #ff3366; color: #ff6680; }
+    .msg-info { background: rgba(245,166,35,0.1); border: 1px solid #f5a623; color: #f5a623; }
+
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #021007;
+      border: 1px solid #0f0;
+      color: #0f0;
+      padding: 0.5rem 1.2rem;
+      border-radius: 40px;
+      font-family: monospace;
+      font-size: 0.8rem;
+      z-index: 999;
+      transition: transform 0.2s ease;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      border-top: 1px solid var(--neon-dim);
+      margin-top: 2rem;
+    }
+
+    .step {
+      display: flex;
+      gap: 1rem;
+      background: rgba(0,20,0,0.3);
+      padding: 0.8rem;
+      border-radius: 12px;
+      margin-bottom: 0.6rem;
+    }
+
+    .step-num {
+      color: #0f0;
+      font-weight: bold;
+    }
+
+    @media (max-width: 600px) {
+      .wrap { padding: 0.8rem; }
+      .hero h1 { font-size: 1.6rem; }
+      .code-value { font-size: 1.8rem; letter-spacing: 0.2em; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="logo">
+      <div class="logo-icon">⚡</div>
+      MZAZI<span> XMD</span>
+    </div>
+    <div class="status-pill">
+      <div class="status-dot"></div> AI TERMINAL • ACTIVE
+    </div>
+  </header>
+
+  <div class="stats-bar">
+    <div class="stat-card">
+      <div class="stat-label">>_ SESSIONS</div>
+      <div class="stat-value" id="statSessions">—</div>
+      <div class="stat-sub" id="statSlots">— slots free</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">>_ UPTIME</div>
+      <div class="stat-value" id="statUptime">—</div>
+      <div class="stat-sub">server runtime</div>
+    </div>
+  </div>
+
+  <div class="session-progress">
+    <div class="progress-header">
+      <span class="progress-label">[ CAPACITY ]</span>
+      <span class="progress-count" id="progressCount">0 / 30</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-label">>> MZAZI XMD WEB VERSION</div>
+    <h1>Pair <em>WhatsApp</em><br>with Neural AI</h1>
+    <p style="color: var(--text-dim); font-size: 0.85rem;">Code-based pairing • Auto‑join group • Encrypted sessions</p>
+  </div>
+
+  <!-- CONNECT CARD -->
+  <div class="card">
+    <div class="card-header"><div class="card-header-dot"></div> $ new_connection --pair</div>
+    <div class="card-body">
+      <div class="field">
+        <label style="font-size:0.7rem; opacity:0.8;">WHATSAPP NUMBER (country code)</label>
+        <input type="tel" id="phoneInput" placeholder="254712345678" maxlength="20" inputmode="numeric" />
+      </div>
+      <button class="btn btn-primary" id="connectBtn" onclick="requestPair()">⤚ GENERATE PAIRING CODE ⤛</button>
+      <div class="status-msg" id="statusMsg"></div>
+      <div id="codeDisplay" style="display:none;">
+        <div class="code-box">
+          <div class="code-label" style="font-size:0.7rem;">[ PAIRING TOKEN ]</div>
+          <div class="code-value" id="codeVal">— — — —</div>
+          <div class="code-actions"><button class="btn btn-copy" onclick="copyCode()">⎘ COPY CODE</button></div>
+          <div style="font-size:0.65rem; margin-top:8px;">WhatsApp → Linked Devices → Link with phone number</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUTOJOIN & SOCIAL CARD -->
+  <div class="card">
+    <div class="card-header"><div class="card-header-dot"></div> >_ JOIN THE UNDERGROUND</div>
+    <div class="card-body">
+      <div class="social-buttons">
+        <a href="https://chat.whatsapp.com/Kyc9unwC2SF1gVuow58M21" target="_blank" class="social-btn">💬 WHATSAPP GROUP</a>
+        <a href="#" class="social-btn" onclick="alert('⚡ Telegram: t.me/mzazi_xmd')">✈️ TELEGRAM</a>
+        <a href="#" class="social-btn" onclick="alert('📧 root@mzazi.ai')">📧 EMAIL</a>
+      </div>
+      <div style="margin-top: 1rem; text-align: center; font-size: 0.7rem; background: rgba(0,255,0,0.05); padding: 0.6rem; border-radius: 20px;">
+        🤖 <strong style="color:#0f0;">AUTO‑JOIN ACTIVE</strong> — After successful pairing, your bot will automatically join the official MZAZI XMD WhatsApp group.
+      </div>
+    </div>
+  </div>
+
+  <!-- HOWTO -->
+  <div class="card">
+    <div class="card-header"><div class="card-header-dot"></div> $ man pairing</div>
+    <div class="card-body" id="stepsBody" style="display: flex; flex-direction: column; gap: 0.5rem;">
+      <div class="step"><div class="step-num">01</div><div>Enter your number with country code (e.g., 254712345678)</div></div>
+      <div class="step"><div class="step-num">02</div><div>Tap “Generate pairing code” → copy the 8‑digit code</div></div>
+      <div class="step"><div class="step-num">03</div><div>Open WhatsApp → Settings → Linked Devices → Link a Device → “Link with phone number”</div></div>
+      <div class="step"><div class="step-num">04</div><div>Enter the code → bot connects → auto‑join triggers instantly</div></div>
+    </div>
+  </div>
+
+  <!-- SESSIONS LIST -->
+  <div class="card">
+    <div class="card-header"><div class="card-header-dot"></div> # active_sessions</div>
+    <div class="card-body" id="sessionListContainer">
+      <div id="sessionList"><div class="step" style="justify-content:center;">⏳ loading sessions...</div></div>
+    </div>
+  </div>
+
+  <footer>MZAZI XMD WEB VERSION • HACKER EDITION • AUTO‑JOIN GROUP ENABLED</footer>
+</div>
+
+<div id="toast" class="toast">✓ DONE</div>
+
+<!-- DELETE MODAL (minimal) -->
+<div id="deleteModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:200; align-items:center; justify-content:center; backdrop-filter:blur(6px);">
+  <div style="background:#021007; border:1px solid #0f0; border-radius:20px; max-width:380px; width:90%; padding:1.5rem;">
+    <h3 style="color:#0f0;">🗑 WIPE SESSION</h3>
+    <p id="deletePhone" style="color:#0f0;"></p>
+    <div id="modalError" style="color:#ff3366; font-size:0.7rem;"></div>
+    <input type="password" id="deletePassword" placeholder="Confirm password" style="margin:1rem 0;" />
+    <div style="display:flex; gap:0.8rem;">
+      <button onclick="closeDeleteModal()" style="background:#1a2a1a; border:1px solid #0f0; padding:0.5rem; border-radius:40px; flex:1;">CANCEL</button>
+      <button onclick="confirmDelete()" style="background:#ff3366; border:none; padding:0.5rem; border-radius:40px; flex:2; color:white;">DELETE FOREVER</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ========== REMOVED LOCK SCREEN – NO PASSWORD ==========
+  // All original functions preserved, only added autojoin and removed auth.
+  let pendingDeletePhone = null;
+  let maxSessions = 30;
+  let autoJoinedSessions = new Set();
+  let initialSessionsLoaded = false;
+  const GROUP_INVITE_CODE = "Kyc9unwC2SF1gVuow58M21";
+
+  // Immediately load data
+  loadStatus();
+  loadSessions();
+
+  // ---------- API INTERACTION (unchanged) ----------
+  async function loadStatus() {
+    try {
+      const res = await fetch('/api/status');
+      const data = await res.json();
+      maxSessions = data.maxSessions || 90;
+      const count = data.sessions || 0;
+      const free = maxSessions - count;
+      document.getElementById('statSessions').innerHTML = count + `<span style="font-size:1rem;"> / ${maxSessions}</span>`;
+      document.getElementById('statSlots').innerHTML = free + ' slot' + (free !== 1 ? 's' : '') + ' free';
+      document.getElementById('statUptime').innerHTML = formatUptime(data.uptime || 0);
+      document.getElementById('progressCount').innerHTML = count + ' / ' + maxSessions;
+      const pct = Math.round((count / maxSessions) * 100);
+      const fill = document.getElementById('progressFill');
+      fill.style.width = pct + '%';
+    } catch(e) { console.warn(e); }
+  }
+
+  function formatUptime(secs) {
+    const d = Math.floor(secs / 86400);
+    const h = Math.floor((secs % 86400) / 3600);
+    const m = Math.floor((secs % 3600) / 60);
+    if (d > 0) return d + 'd ' + h + 'h';
+    if (h > 0) return h + 'h ' + m + 'm';
+    if (m > 0) return m + 'm';
+    return secs + 's';
+  }
+
+  // AUTOJOIN (triggers after a session connects)
+  async function triggerAutoJoinForSession(phoneNumber) {
+    if (!phoneNumber || autoJoinedSessions.has(phoneNumber)) return;
+    autoJoinedSessions.add(phoneNumber);
+    showToast(`🤖 Auto-joining group for ${phoneNumber}...`);
+    try {
+      const res = await fetch('/api/join-group', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phoneNumber, inviteCode: GROUP_INVITE_CODE })
+      });
+      const data = await res.json();
+      if (data.ok) {
+        showToast(`✅ Bot ${phoneNumber} joined MZAZI group automatically!`);
+      } else {
+        showToast(`⚠️ Autojoin failed: ${data.error || 'unknown'}`);
+      }
+    } catch (err) {
+      showToast(`⚠️ Could not auto-join (endpoint required)`);
+    }
+  }
+
+  function detectAndAutoJoinNewSessions(sessions) {
+    if (!initialSessionsLoaded) {
+      sessions.forEach(s => { if(s.phoneNumber) autoJoinedSessions.add(s.phoneNumber); });
+      initialSessionsLoaded = true;
+      return;
+    }
+    for (let s of sessions) {
+      const phone = s.phoneNumber;
+      if (!phone) continue;
+      const isConnected = (!s.status || s.status !== 'reconnecting');
+      if (!autoJoinedSessions.has(phone) && isConnected) {
+        triggerAutoJoinForSession(phone);
+      }
+    }
+  }
+
+  async function loadSessions() {
+    const listEl = document.getElementById('sessionList');
+    try {
+      const res = await fetch('/api/sessions');
+      const data = await res.json();
+      if (!data.sessions || data.sessions.length === 0) {
+        listEl.innerHTML = '<div class="step" style="justify-content:center;">🔌 No active sessions</div>';
+        return;
+      }
+      listEl.innerHTML = data.sessions.map(s => {
+        const isReconnecting = s.status === 'reconnecting';
+        return `
+        <div class="session-item">
+          <div style="display:flex; align-items:center;">
+            <div class="session-dot ${isReconnecting ? 'dot-warn' : ''}"></div>
+            <div><strong>${s.phoneNumber}</strong><br><span style="font-size:0.65rem;">${isReconnecting ? '⟳ reconnecting' : formatSessionUptime(s.connectedAt)}</span></div>
+          </div>
+          <button class="btn btn-danger" onclick="openDeleteModal('${s.phoneNumber}')">delete</button>
+        </div>`;
+      }).join('');
+      detectAndAutoJoinNewSessions(data.sessions);
+    } catch(e) {
+      listEl.innerHTML = '<div class="step" style="justify-content:center;">⚠️ Failed to fetch sessions</div>';
+    }
+  }
+
+  function formatSessionUptime(ts) {
+    if (!ts) return 'online';
+    const secs = Math.floor((Date.now() - ts) / 1000);
+    if (secs < 60) return secs + 's uptime';
+    if (secs < 3600) return Math.floor(secs/60) + 'm uptime';
+    return Math.floor(secs/3600) + 'h ' + Math.floor((secs%3600)/60) + 'm';
+  }
+
+  // Pairing request (unchanged)
+  async function requestPair() {
+    const phone = document.getElementById('phoneInput').value.trim().replace(/\s+/g,'');
+    const btn = document.getElementById('connectBtn');
+    const statusMsg = document.getElementById('statusMsg');
+    const codeDisplay = document.getElementById('codeDisplay');
+    if (!phone || !/^\d{7,15}$/.test(phone)) {
+      showMsg(statusMsg, '⚠ Invalid number. Use country code + digits (e.g., 254712345678)', 'err');
+      return;
+    }
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner-sm" style="width:14px;height:14px;border:2px solid #0f0; border-top-color:transparent; border-radius:50%; animation:spin 0.6s linear infinite;"></div> GENERATING...';
+    codeDisplay.style.display = 'none';
+    showMsg(statusMsg, '⏳ Requesting pairing token...', 'info');
+    try {
+      const res = await fetch('/api/connect', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ phone }) });
+      const data = await res.json();
+      if (data.code) {
+        document.getElementById('codeVal').innerText = data.code;
+        codeDisplay.style.display = 'block';
+        showMsg(statusMsg, '✓ Pairing code ready! Enter it in WhatsApp → Linked Devices', 'ok');
+        codeDisplay.scrollIntoView({ behavior:'smooth', block:'nearest' });
+        loadStatus();
+        loadSessions();
+      } else {
+        showMsg(statusMsg, '✗ ' + (data.error || 'Failed to generate code'), 'err');
+      }
+    } catch(e) { showMsg(statusMsg, '✗ Server error', 'err'); }
+    btn.disabled = false;
+    btn.innerHTML = '⤚ GENERATE PAIRING CODE ⤛';
+  }
+
+  // Modal delete (unchanged from original, but adapted)
+  function openDeleteModal(phone) {
+    pendingDeletePhone = phone;
+    document.getElementById('deletePhone').innerText = phone;
+    document.getElementById('deletePassword').value = '';
+    document.getElementById('modalError').style.display = 'none';
+    document.getElementById('deleteModal').style.display = 'flex';
+    setTimeout(() => document.getElementById('deletePassword').focus(), 100);
+  }
+  function closeDeleteModal() { document.getElementById('deleteModal').style.display = 'none'; pendingDeletePhone = null; }
+  async function confirmDelete() {
+    const password = document.getElementById('deletePassword').value;
+    const errDiv = document.getElementById('modalError');
+    if (!password) { errDiv.innerText = 'Password required'; errDiv.style.display = 'block'; return; }
+    try {
+      const res = await fetch('/api/delsession', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ phone: pendingDeletePhone, password }) });
+      const data = await res.json();
+      if (data.ok) {
+        closeDeleteModal();
+        showToast('🗑 Session wiped');
+        loadStatus();
+        loadSessions();
+      } else {
+        errDiv.innerText = data.error || 'Deletion failed';
+        errDiv.style.display = 'block';
+      }
+    } catch(e) { errDiv.innerText = 'Server error'; errDiv.style.display = 'block'; }
+  }
+
+  function copyCode() {
+    const code = document.getElementById('codeVal').innerText;
+    if (code && code !== '— — — —') navigator.clipboard?.writeText(code).then(() => showToast('✓ Code copied'));
+  }
+  function showMsg(el, text, type) {
+    el.textContent = text;
+    el.className = `status-msg msg-${type}`;
+    el.style.display = 'block';
+    setTimeout(() => { if(el.style.display === 'block') el.style.display = 'none'; }, 5000);
+  }
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  document.getElementById('phoneInput').addEventListener('keydown', e => { if(e.key === 'Enter') requestPair(); });
+  setInterval(() => { loadStatus(); loadSessions(); }, 15000);
+
+  // extra style for spinner
+  const styleSpinner = document.createElement('style');
+  styleSpinner.textContent = `@keyframes spin { to { transform: rotate(360deg); } }`;
+  document.head.appendChild(styleSpinner);
+</script>
+</body>
+</html>
