@@ -15,7 +15,7 @@ const {
   DisconnectReason,
   initAuthCreds,
   BufferJSON
-} = require('@trashcore/baileys');
+} = require('@whiskeysockets/baileys');
 
 const { loadPlugins, watchPlugins, plugins } = require('./pluginStore');
 const { initDatabase, getSetting } = require('./database');
